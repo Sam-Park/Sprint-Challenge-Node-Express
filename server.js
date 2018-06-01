@@ -59,10 +59,10 @@ server.post("/api/projects", (req, res) => {
   server.put("/api/projects/:id", (req, res) => {
     const { id } = req.params;
     const { name, description, completed } = req.body;
-    action
-      .update(id, { project_id, description, notes, completed })
-      .then(updateAction => {
-        if (updateAction === 0) {
+    project
+      .update(id, { name, description, completed })
+      .then(updatePro => {
+        if (updatePro=== 0) {
           return generalErrorHelper(404, "No Action by that ID", res);
         } else {
           db.find(id).then(ud => {
@@ -75,6 +75,21 @@ server.post("/api/projects", (req, res) => {
       });
   });
 
+  server.delete('/api/projects/:id', (req, res) => {
+    const { id } = req.params;
+    project
+      .remove(id)
+      .then(removeProject => {
+        if (removeProject === 0) {
+          return generalErrorHelper(404, "No Project by that ID", res);
+        } else {
+          res.json({ success: "Project Removed " });
+        }
+      })
+      .catch(error => {
+        return generalErrorHelper(500, "Database Error", res);
+      });
+  });
 // ============ Action EndPoints ==================
 
 server.get("/api/projects/actions", (req, res) => {
